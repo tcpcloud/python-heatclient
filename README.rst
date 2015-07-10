@@ -10,3 +10,10 @@ Development takes place via the usual OpenStack processes as outlined in the
 repository is on `GitHub <http://github.com/heat-api/python-heatclient>`_.
 
 See release notes and more at `<http://docs.openstack.org/developer/python-heatclient/>`_.
+
+Installation
+------------
+
+.. code-block:: bash
+
+   pip install -e 'git+https://github.com/tcpcloud/python-heatclient.git@stable/juno#egg=heatclient'
