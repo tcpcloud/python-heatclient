@@ -234,11 +234,14 @@ class HTTPClient(object):
         if location is None:
             message = _("Location not returned with 302")
             raise exc.InvalidEndpoint(message=message)
-        elif location.lower().startswith(self.endpoint.lower()):
-            return location[len(self.endpoint):]
+#Test fixes for https to http bug
+#        elif location.lower().startswith(self.endpoint.lower()):
+#            return location[len(self.endpoint):]
         else:
-            message = _("Prohibited endpoint redirect %s") % location
-            raise exc.InvalidEndpoint(message=message)
+#            message = _("Prohibited endpoint redirect %s") % location
+#            raise exc.InvalidEndpoint(message=message)
+            splited_location = location.split('/stacks')
+            return location[len(splited_location[0]):]
 
     def credentials_headers(self):
         creds = {}
