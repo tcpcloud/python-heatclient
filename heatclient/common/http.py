@@ -65,19 +65,26 @@ class HTTPClient(object):
         self.key_file = kwargs.get('key_file')
         self.timeout = kwargs.get('timeout')
 
-        self.ssl_connection_params = {
-            'ca_file': kwargs.get('ca_file'),
-            'cert_file': kwargs.get('cert_file'),
-            'key_file': kwargs.get('key_file'),
-            'insecure': kwargs.get('insecure'),
-        }
-
         self.verify_cert = None
         if parse.urlparse(endpoint).scheme == "https":
             if kwargs.get('insecure'):
                 self.verify_cert = False
             else:
-                self.verify_cert = kwargs.get('ca_file', get_system_ca_file())
+                if kwargs.get('ca_file'):
+                    self.verify_cert = kwargs.get('ca_file')
+                elif os.getenv('OS_CACERT'):
+                    LOG.debug("Using CA bundle %s from OS_CACERT env variable.",
+                              os.getenv('OS_CACERT'))
+                    self.verify_cert = os.getenv('OS_CACERT')
+                else:
+                    self.verify_cert = get_system_ca_file()
+
+        self.ssl_connection_params = {
+            'ca_file': self.verify_cert,
+            'cert_file': kwargs.get('cert_file'),
+            'key_file': kwargs.get('key_file'),
+            'insecure': kwargs.get('insecure'),
+        }
 
     def log_curl_request(self, method, url, kwargs):
         curl = ['curl -i -X %s' % method]
